@@ -1,24 +1,11 @@
-import { useState, useEffect } from "react";
-import {
-  MainPageContainer,
-  FilterAndResults,
-  MainFilterimg,
-  ResultsFound,
-  AllCategoriesAndResult,
-  AllCategories,
-  ProductMainContainer,
-  CategiriesList,
-  PriceContainer,
-  CategiriesListItem,
-  CategiriesListItemP,
-  ProductInfo,
-  DivForProductimg,
-  DivForProductNameAndPrice,
-  ProducName,
-  ProductPrice,
-  AllcategoryP,
-} from "./StyledMainPage";
-import filterButton from "../../assets/filterButton.png";
+
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { MainPageContainer, FilterAndResults, MainFilterimg, ResultsFound, AllCategoriesAndResult, AllCategories, ProductMainContainer, CategiriesList, PriceContainer, CategiriesListItem, CategiriesListItemP, ProductInfo, DivForProductimg, DivForProductNameAndPrice, ProducName, ProductPrice, AllcategoryP } from "./StyledMainPage";
+import filterButton from '../../assets/filterButton.png';
+import Price from './Price';
+import ProductPage from '../../ProductPage/ProductPage';
+
 
 interface Product {
   id: number;
@@ -28,66 +15,78 @@ interface Product {
   price: number;
 }
 
-const MainPage = () => {
+interface MainPageProps {
+  selectedCategory: string | null;
+  onCategoryChange: (category: string | null) => void;
+}
+
+const MainPage: React.FC<MainPageProps> = ({selectedCategory,onCategoryChange}) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [uniqueCategories, setUniqueCategories] = useState<string[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+ 
 
   useEffect(() => {
-    fetch("https://fakestoreapi.com/products")
-      .then((response) => response.json())
+    fetch('https://fakestoreapi.com/products')
+      .then(response => response.json())
       .then((data: Product[]) => {
         setProducts(data);
 
-        const categories = Array.from(new Set(data.map((product) => product.category)));
+        const categories = Array.from(new Set(data.map(product => product.category)));
         setUniqueCategories(categories);
       });
+
   }, []);
 
   const handleCategoryClick = (category: string | null) => {
-    setSelectedCategory(category);
-  };
+    onCategoryChange(category===selectedCategory? null:category);
+  }
 
-  const getCategoryCount = (category: string | null) => {
-    return category
-      ? products.filter((product) => product.category === category).length
-      : products.length;
-  };
+  const handleProductClick = (product: Product) => {
+    setSelectedProduct(product);
+  }
 
   return (
-    <MainPageContainer>
-      <FilterAndResults>
-        <MainFilterimg src={filterButton} />
-        <ResultsFound>
-          {getCategoryCount(selectedCategory)} results found
-        </ResultsFound>
-      </FilterAndResults>
+   
+      <MainPageContainer>
 
-      <AllCategoriesAndResult>
-        <AllCategories>
-          <CategiriesList>
-            <CategiriesListItem onClick={() => handleCategoryClick(null)}>
-              <AllcategoryP>All Categories</AllcategoryP>
-            </CategiriesListItem>
-            {uniqueCategories.map((category) => (
-              <CategiriesListItem
-                key={category}
-                onClick={() => handleCategoryClick(category)}
-              >
-                <CategiriesListItemP>
-                  {category} ({getCategoryCount(category)})
-                </CategiriesListItemP>
-              </CategiriesListItem>
-            ))}
-          </CategiriesList>
-          <PriceContainer></PriceContainer>
-        </AllCategories>
+        <FilterAndResults>
+          <MainFilterimg src={filterButton} />
+          <ResultsFound>
+            {selectedCategory
+              ? `${products.filter(product => product.category === selectedCategory).length} results found`
+              : `${products.length} results found`}
+          </ResultsFound>
+        </FilterAndResults>
 
-        <ProductMainContainer>
-          {selectedCategory
-            ? products
-                .filter((product) => product.category === selectedCategory)
-                .map((i) => (
+        <AllCategoriesAndResult>
+          <AllCategories>
+            <AllcategoryP onClick={() => handleCategoryClick(null)}>All Categories</AllcategoryP>
+            <CategiriesList>
+              {uniqueCategories.map(category => (
+                <CategiriesListItem
+                  key={category}
+                  onClick={() => handleCategoryClick(category)}>
+                  <CategiriesListItemP>
+                    {category} ({selectedCategory
+                      ? products.filter(y => y.category === category).length
+                      : products.filter(y => y.category === category).length})
+                  </CategiriesListItemP>
+                </CategiriesListItem>
+              ))}
+            </CategiriesList>
+
+          <Price></Price>
+
+          </AllCategories>
+
+          <ProductMainContainer>
+            {selectedCategory
+              ? products
+                .filter(product => product.category === selectedCategory)
+                .map(i => (
+                  
+                  
                   <ProductInfo key={i.id}>
                     <DivForProductimg src={i.image} />
                     <DivForProductNameAndPrice>
@@ -96,7 +95,7 @@ const MainPage = () => {
                     </DivForProductNameAndPrice>
                   </ProductInfo>
                 ))
-            : products.map((i) => (
+              : products.map(i => (
                 <ProductInfo key={i.id}>
                   <DivForProductimg src={i.image} />
                   <DivForProductNameAndPrice>
@@ -105,10 +104,15 @@ const MainPage = () => {
                   </DivForProductNameAndPrice>
                 </ProductInfo>
               ))}
-        </ProductMainContainer>
-      </AllCategoriesAndResult>
-    </MainPageContainer>
+          </ProductMainContainer>
+        </AllCategoriesAndResult>
+
+
+
+
+      </MainPageContainer>
+   
   );
-};
+}
 
 export default MainPage;

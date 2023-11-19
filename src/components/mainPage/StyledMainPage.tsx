@@ -6,6 +6,7 @@ display: flex;
 flex-direction: column;
 width:80%;
 background-color:white;
+
 `;
 
 
@@ -14,6 +15,8 @@ display:flex;
 justify-content:space-between;
 margin-top:20px;
 margin-bottom:20px;
+
+
 `;
 const MainFilterimg=styled.img`
 width:131px;
@@ -28,12 +31,14 @@ color:#666666
 
 const AllCategoriesAndResult=styled.div`
 display:flex;
+
 `;
 
 const AllCategories=styled.div`
 display:flex;
 flex-direction:column;
 width:30%;
+
 `;
 
 const AllcategoryP=styled.div`
@@ -52,6 +57,7 @@ flex-direction:column;
 
 const CategiriesListItem=styled.div`
 display:flex;
+
 
 `;
 const CategiriesListItemP=styled.p`
@@ -75,6 +81,7 @@ const ProductMainContainer=styled.div`
 display:grid;
 grid-template-columns:1fr 1fr 1fr;
 gap:5px;
+
 `;
 const ProductInfo=styled.div`
 display:flex;
@@ -83,6 +90,13 @@ width:300px;
 height:450px;
 border: 2px solid #CCCCCC;
 border-radius:6px;
+cursor:pointer;
+
+&:hover {
+  border:3px solid #00B207;
+   
+  }
+  
 `;
 const DivForProductimg=styled.img`
 width: 260px;
