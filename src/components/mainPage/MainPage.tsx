@@ -1,29 +1,31 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { MainPageContainer, FilterAndResults, MainFilterimg, ResultsFound, AllCategoriesAndResult, AllCategories, ProductMainContainer, CategiriesList, PriceContainer, CategiriesListItem, CategiriesListItemP, ProductInfo, DivForProductimg, DivForProductNameAndPrice, ProducName, ProductPrice, AllcategoryP } from "./StyledMainPage";
 import filterButton from '../../assets/filterButton.png';
-import Price from './Price';
-import ProductPage from '../../ProductPage/ProductPage';
 
 
-interface Product {
+
+
+
+export interface Product {
   id: number;
   category: string;
-  image: any;
+  image: string;
   title: string;
   price: number;
+  description: string;
 }
-
 interface MainPageProps {
   selectedCategory: string | null;
   onCategoryChange: (category: string | null) => void;
+  setSelectedProduct?: (product: Product | null) => void; 
 }
 
-const MainPage: React.FC<MainPageProps> = ({selectedCategory,onCategoryChange}) => {
+const MainPage: React.FC<MainPageProps> = ({ selectedCategory, onCategoryChange, setSelectedProduct }) =>{
   const [products, setProducts] = useState<Product[]>([]);
   const [uniqueCategories, setUniqueCategories] = useState<string[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const navigate = useNavigate();
  
 
   useEffect(() => {
@@ -43,7 +45,10 @@ const MainPage: React.FC<MainPageProps> = ({selectedCategory,onCategoryChange}) 
   }
 
   const handleProductClick = (product: Product) => {
-    setSelectedProduct(product);
+    if (setSelectedProduct) {
+      setSelectedProduct(product);
+    }
+  
   }
 
   return (
@@ -76,40 +81,42 @@ const MainPage: React.FC<MainPageProps> = ({selectedCategory,onCategoryChange}) 
               ))}
             </CategiriesList>
 
-          <Price></Price>
+       
 
           </AllCategories>
 
           <ProductMainContainer>
-            {selectedCategory
-              ? products
-                .filter(product => product.category === selectedCategory)
-                .map(i => (
-                  
-                  
-                  <ProductInfo key={i.id}>
-                    <DivForProductimg src={i.image} />
-                    <DivForProductNameAndPrice>
-                      <ProducName>{i.title}</ProducName>
-                      <ProductPrice>$ {i.price}</ProductPrice>
-                    </DivForProductNameAndPrice>
-                  </ProductInfo>
-                ))
-              : products.map(i => (
-                <ProductInfo key={i.id}>
+        {selectedCategory
+          ? products
+            .filter(product => product.category === selectedCategory)
+            .map(i => (
+              <Link to={`/product/${i.id}`} key={i.id}>
+                <ProductInfo onClick={() => handleProductClick(i)} key={i.id}>
                   <DivForProductimg src={i.image} />
                   <DivForProductNameAndPrice>
                     <ProducName>{i.title}</ProducName>
                     <ProductPrice>$ {i.price}</ProductPrice>
                   </DivForProductNameAndPrice>
                 </ProductInfo>
-              ))}
-          </ProductMainContainer>
+              </Link>
+            ))
+          : products.map(i => (
+            <Link to={`/product/${i.id}`} key={i.id}>
+              <ProductInfo onClick={() => handleProductClick(i)} key={i.id}>
+                <DivForProductimg src={i.image} />
+                <DivForProductNameAndPrice>
+                  <ProducName>{i.title}</ProducName>
+                  <ProductPrice>$ {i.price}</ProductPrice>
+                </DivForProductNameAndPrice>
+              </ProductInfo>
+            </Link>
+          ))}
+      </ProductMainContainer>
         </AllCategoriesAndResult>
 
 
 
-
+      
       </MainPageContainer>
    
   );

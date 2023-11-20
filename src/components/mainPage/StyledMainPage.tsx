@@ -4,6 +4,8 @@ import styled from 'styled-components';
 const MainPageContainer=styled.div`
 display: flex;
 flex-direction: column;
+
+
 width:80%;
 background-color:white;
 
